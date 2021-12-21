@@ -2,7 +2,7 @@
 
 > Realtime collaboration with yjs
 
-_Note: This is a fork for the original [@remirror/extension-yjs](https://npmjs.com/package/@remirror%2fextension-yjs), with some adjustments for Collaborne. Likely you want the original extension!._
+_Note: This is a fork for the original [@remirror/extension-yjs](https://npmjs.com/package/@remirror%2fextension-yjs), with some adjustments for Collaborne. Likely you want the original extension!_
 
 ## Installation
 
