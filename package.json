@@ -38,6 +38,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.dist.json",
+    "build:watch": "npm run build -- --watch",
     "test": "jest"
   },
   "dependencies": {
