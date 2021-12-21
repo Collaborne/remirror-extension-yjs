@@ -1,0 +1,93 @@
+{
+  "name": "@collaborne/remirror-extension-yjs",
+  "version": "1.0.0",
+  "description": "Realtime collaboration with yjs (Collaborne fork)",
+  "keywords": [
+    "remirror",
+    "extension",
+    "yjs",
+    "realtime",
+    "collaboration"
+  ],
+  "homepage": "https://github.com/Collaborne/remirror-extension-yjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Collaborne/remirror-extension-yjs.git"
+  },
+  "license": "MIT",
+  "contributors": [
+    "Andreas Kohn <andreas.kohn@gmail.com>",
+    "Benjie Gillam <code@benjiegillam.com>",
+    "Ifiok Jr. <ifiokotung@gmail.com>"
+  ],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "browser": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "module": "dist/index.js",
+  "browser": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.dist.json",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@remirror/core": "^1.3.2",
+    "@remirror/extension-annotation": "^1.1.7",
+    "@remirror/messages": "^1.0.5",
+    "y-prosemirror": "^1.0.9",
+    "y-protocols": "^1.0.5"
+  },
+  "devDependencies": {
+    "@remirror/pm": "^1.0.9",
+    "@types/jest": "^27.0.3",
+    "jest": "^27.4.5",
+    "jest-extended": "^1.2.0",
+    "jest-prosemirror": "^1.0.11",
+    "jest-remirror": "^1.0.19",
+    "ts-jest": "^27.1.2",
+    "tsconfig-collaborne": "^1.5.0",
+    "typescript": "^4.5.4",
+    "y-webrtc": "^10.2.0",
+    "yjs": "^13.5.11"
+  },
+  "peerDependencies": {
+    "@remirror/pm": "^1.0.8",
+    "yjs": "^13.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "transform": {
+      "\\.[jt]sx?$": [
+        "ts-jest"
+      ]
+    },
+    "globals": {
+      "ts-jest": {
+        "tsconfig": {
+          "allowJs": true
+        }
+      }
+    },
+    "setupFilesAfterEnv": [
+      "./jest.setup.ts"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(lib0|y-protocols)/)"
+    ],
+    "testEnvironment": "jsdom",
+    "testRegex": "(/__tests__/(.+)(\\.|/)(test|spec))\\.[jt]sx?$"
+  }
+}

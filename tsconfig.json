@@ -1,0 +1,15 @@
+{
+    "extends": "tsconfig-collaborne",
+    "compilerOptions": {
+        "module": "ESNext",
+        "target": "ES2019",
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+        "jsx": "react-jsxdev",
+        "types": ["jest"],
+        "noEmit": true
+    },
+    "include": [
+        "src/**/*.ts",
+        "__tests__/**/*.ts"
+    ]
+}
