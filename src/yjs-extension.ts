@@ -9,7 +9,7 @@ import {
   ySyncPluginKey,
   yUndoPlugin,
   yUndoPluginKey,
-} from 'y-prosemirror';
+} from '@collaborne/y-prosemirror';
 import type { Doc, RelativePosition, Transaction as YjsTransaction, UndoManager } from 'yjs';
 import {
   AcceptUndefined,
