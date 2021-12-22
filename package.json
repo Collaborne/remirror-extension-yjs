@@ -1,6 +1,6 @@
 {
   "name": "@collaborne/remirror-extension-yjs",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Realtime collaboration with yjs (Collaborne fork)",
   "keywords": [
     "remirror",
