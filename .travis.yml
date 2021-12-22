@@ -1,0 +1,54 @@
+language: node_js
+node_js:
+- lts/erbium
+cache:
+  directories:
+  - node_modules
+script:
+- npm test
+after_success:
+- npm run build
+before_deploy:
+- |-
+  # `before_deploy` runs before each deploy provider, so if there is already a build_package_version defined don't bother working
+  # through this again.
+  # Note that we only do this when this is a non-tagged build; for tagged builds the assumption is that the version inside
+  # `package.json` is correct.
+  if [ -z "${build_package_version}" ] && [ -z "${TRAVIS_TAG}" ]; then
+    # Build a version that properly compares as prerelease on top of the existing version. If the existing version is
+    # a pre-release already separate further components with '.', otherwise use '-'.
+    # The safe branch name is used as dist tag and as part of the version as prerelease identifier, so must follow
+    # the strict semver grammar rules.
+    safe_branch_name=$(echo "${TRAVIS_BRANCH}" | tr -d '\n' | tr -cd 'A-Za-z0-9-')
+    ts=$(date +%Y%m%d%H%M%S)
+    package_version=$(node -p 'require("./package.json").version')
+    if echo "${package_version}" | grep -- '-' >/dev/null 2>&1; then
+      prerelease_separator=.
+    else
+      prerelease_separator=-
+    fi
+
+    build_package_version=${package_version}${prerelease_separator}${safe_branch_name}.${ts}
+    echo "build_package_version calculated as ${build_package_version}" >&2
+    npm --no-git-tag-version version ${build_package_version}
+  else
+    echo "using version ${build_package_version:-${TRAVIS_TAG}}" >&2
+  fi
+deploy:
+- provider: npm
+  email: npm@collaborne.com
+  api_key:
+    secure: "HXwiSgX14Fq2I3ODuj0PFvZigbn70e84j9Rj1xkzwF1z1cHJ/J0zA90TY4heWOtIEpYQ9aYyiBacHzoMyZvjy7NkMj2QabKERegOOvHFuLeEVQ1tmSrWYfDOJCi+jDrtqL5clCLHfZG8vdCUFBUlxYdFgF6VMSWIYLoa85GirY3A3YjxStXS10CKtfT5jFBkEDUSJtrZ4grhZJXKPtxLN8LkchvK20mGVEcm9WNJ4hPhUjmAzuLlqF8QRAO88brIXXfJbJaKZdUQS6x+Q9ldAlO5nEa/OJi38n3xh4XeKNgnkVQYKsJsfbMuRyKCQR4Lz99MSgywLlSeWUaIM6x6fweYOelyeEXOPtiD8M+I1JuIhr/zp00vc8lo+zZPAIzw+mIFE7Q0/blkIALn9MUzUZ3mSYvAhLKjQFNNDfv0iF3p6dTN2c4ygv0nYpfy6EnmAkp5+iRGPkD8bg+Znli7JeyWXfqq0sPg5GlkpNN/KaJRCWIi1XMj2NZaU6tD6ixJSztH+b9j/Jr2Lo/RXs8ToDGNOfhJ6uwg+WHxOiMNnxoPl+WPono5tfZjY0g/Fld2YAgWCp9yBhExP9yViGxryBd2l9mLZEbrfHnP34KlnF8gjTNY/2NzKPyxPbn7TS+wBgcagnd5ii9P1Fae90JnE6osxcI+MYkbEopfRt63d8A="
+  on:
+    tags: true
+    condition: $(node -e 'console.log("v" + require("./package.json").version)') = ${TRAVIS_TAG}
+  skip_cleanup: true
+- provider: npm
+  email: npm@collaborne.com
+  api_key:
+    secure: "HXwiSgX14Fq2I3ODuj0PFvZigbn70e84j9Rj1xkzwF1z1cHJ/J0zA90TY4heWOtIEpYQ9aYyiBacHzoMyZvjy7NkMj2QabKERegOOvHFuLeEVQ1tmSrWYfDOJCi+jDrtqL5clCLHfZG8vdCUFBUlxYdFgF6VMSWIYLoa85GirY3A3YjxStXS10CKtfT5jFBkEDUSJtrZ4grhZJXKPtxLN8LkchvK20mGVEcm9WNJ4hPhUjmAzuLlqF8QRAO88brIXXfJbJaKZdUQS6x+Q9ldAlO5nEa/OJi38n3xh4XeKNgnkVQYKsJsfbMuRyKCQR4Lz99MSgywLlSeWUaIM6x6fweYOelyeEXOPtiD8M+I1JuIhr/zp00vc8lo+zZPAIzw+mIFE7Q0/blkIALn9MUzUZ3mSYvAhLKjQFNNDfv0iF3p6dTN2c4ygv0nYpfy6EnmAkp5+iRGPkD8bg+Znli7JeyWXfqq0sPg5GlkpNN/KaJRCWIi1XMj2NZaU6tD6ixJSztH+b9j/Jr2Lo/RXs8ToDGNOfhJ6uwg+WHxOiMNnxoPl+WPono5tfZjY0g/Fld2YAgWCp9yBhExP9yViGxryBd2l9mLZEbrfHnP34KlnF8gjTNY/2NzKPyxPbn7TS+wBgcagnd5ii9P1Fae90JnE6osxcI+MYkbEopfRt63d8A="
+  on:
+    all_branches: true
+    condition: ${TRAVIS_TAG} == ""
+  skip_cleanup: true
+  tag: ${safe_branch_name}
