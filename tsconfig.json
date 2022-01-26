@@ -6,7 +6,9 @@
         "lib": ["DOM", "DOM.Iterable", "ESNext"],
         "jsx": "react-jsxdev",
         "types": ["jest"],
-        "noEmit": true
+        "noEmit": true,
+
+        "experimentalDecorators": true
     },
     "include": [
         "src/**/*.ts",
