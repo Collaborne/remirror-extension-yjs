@@ -68,6 +68,9 @@
     "@remirror/pm": "^1.0.8",
     "yjs": "^13.4.0"
   },
+  "engines": {
+    "npm": ">=8.3.0"
+  },
   "publishConfig": {
     "access": "public"
   },
