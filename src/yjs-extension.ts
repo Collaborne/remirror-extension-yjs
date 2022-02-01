@@ -102,6 +102,8 @@ export interface YjsOptions<Provider extends YjsRealtimeProvider = YjsRealtimePr
    */
   getSelection?: (state: EditorState) => Selection;
 
+  disableUndo?: boolean;
+
   /**
    * Names of nodes in the editor which should be protected.
    *
@@ -128,6 +130,7 @@ export interface YjsOptions<Provider extends YjsRealtimeProvider = YjsRealtimePr
     cursorBuilder: defaultCursorBuilder,
     cursorStateField: 'cursor',
     getSelection: (state) => state.selection,
+    disableUndo: false,
     protectedNodes: new Set('paragraph'),
     trackedOrigins: [],
   },
@@ -183,6 +186,7 @@ export class YjsExtension extends PlainExtension<YjsOptions> {
       cursorBuilder,
       getSelection,
       cursorStateField,
+      disableUndo,
       protectedNodes,
       trackedOrigins,
     } = this.options;
@@ -190,19 +194,24 @@ export class YjsExtension extends PlainExtension<YjsOptions> {
     const yDoc = this.provider.doc;
     const type = yDoc.getXmlFragment('prosemirror');
 
-    const undoManager = new UndoManager(type, {
-      trackedOrigins: new Set([ySyncPluginKey].concat(trackedOrigins)),
-      deleteFilter: (item) => defaultDeleteFilter(item, protectedNodes)
-    });
-    return [
+    const plugins = [
       ySyncPlugin(type, syncPluginOptions),
       yCursorPlugin(
         this.provider.awareness,
         { cursorBuilder, cursorStateField, getSelection },
         cursorStateField,
       ),
-      yUndoPlugin({ undoManager }),
     ];
+
+    if (!disableUndo) {
+      const undoManager = new UndoManager(type, {
+        trackedOrigins: new Set([ySyncPluginKey].concat(trackedOrigins)),
+        deleteFilter: (item) => defaultDeleteFilter(item, protectedNodes)
+      });
+      plugins.push(yUndoPlugin({ undoManager }))
+    }
+
+    return plugins;
   }
 
   /**
@@ -216,15 +225,16 @@ export class YjsExtension extends PlainExtension<YjsOptions> {
       'getProvider',
       'getSelection',
       'syncPluginOptions',
+      'disableUndo',
       'protectedNodes',
       'trackedOrigins',
     ]);
 
-    if (changes.protectedNodes.changed || changes.trackedOrigins.changed) {
+    if (changes.disableUndo.changed || changes.protectedNodes.changed || changes.trackedOrigins.changed) {
       // Cannot change these, as we would need a new undo manager instance, and for that
       // we would need to unregister the previous instance from the document to avoid
       // memory leaks.
-      throw new Error(`Cannot change "protectedNodes" or "trackedOrigins" options`);
+      throw new Error(`Cannot change "disableUndo", "protectedNodes" or "trackedOrigins" options`);
     }
 
     if (changes.getProvider.changed) {
