@@ -281,6 +281,10 @@ export class YjsExtension extends PlainExtension<YjsOptions> {
   })
   yUndo(): NonChainableCommandFunction {
     return nonChainable((props) => {
+      if (this.options.disableUndo) {
+        return false;
+      }
+
       const { state, dispatch } = props;
       const undoManager: UndoManager = yUndoPluginKey.getState(state).undoManager;
 
@@ -311,6 +315,10 @@ export class YjsExtension extends PlainExtension<YjsOptions> {
   })
   yRedo(): NonChainableCommandFunction {
     return nonChainable((props) => {
+      if (this.options.disableUndo) {
+        return false;
+      }
+
       const { state, dispatch } = props;
       const undoManager: UndoManager = yUndoPluginKey.getState(state).undoManager;
 
