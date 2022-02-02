@@ -45,7 +45,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@collaborne/y-prosemirror": "^1.1.5"
+    "@collaborne/y-prosemirror": "^1.1.7"
   },
   "devDependencies": {
     "@remirror/pm": "^1.0.9",
