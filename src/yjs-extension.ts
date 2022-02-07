@@ -41,6 +41,7 @@ import {
   ProsemirrorPlugin,
   Selection,
   Shape,
+  Static,
 } from '@remirror/core';
 import {
   Annotation,
@@ -114,15 +115,15 @@ export interface YjsOptions<Provider extends YjsRealtimeProvider = YjsRealtimePr
    */
   getSelection?: (state: EditorState) => Selection;
 
-  disableUndo?: boolean;
+  disableUndo?: Static<boolean>;
 
   /**
    * Names of nodes in the editor which should be protected.
    *
    * @default `new Set('paragraph')`
    */
-  protectedNodes?: Set<string>;
-  trackedOrigins?: any[];
+  protectedNodes?: Static<Set<string>>;
+  trackedOrigins?: Static<any[]>;
 }
 
 interface YjsAnnotationPosition {
@@ -237,6 +238,11 @@ class YjsAnnotationStore<Type extends Annotation> implements AnnotationStore<Typ
     protectedNodes: new Set('paragraph'),
     trackedOrigins: [],
   },
+  staticKeys: [
+    'disableUndo',
+    'protectedNodes',
+    'trackedOrigins',
+  ],
   defaultPriority: ExtensionPriority.High,
 })
 export class YjsExtension extends PlainExtension<YjsOptions> {
@@ -338,17 +344,7 @@ export class YjsExtension extends PlainExtension<YjsOptions> {
       'getProvider',
       'getSelection',
       'syncPluginOptions',
-      'disableUndo',
-      'protectedNodes',
-      'trackedOrigins',
     ]);
-
-    if (changes.disableUndo.changed || changes.protectedNodes.changed || changes.trackedOrigins.changed) {
-      // Cannot change these, as we would need a new undo manager instance, and for that
-      // we would need to unregister the previous instance from the document to avoid
-      // memory leaks.
-      throw new Error(`Cannot change "disableUndo", "protectedNodes" or "trackedOrigins" options`);
-    }
 
     if (changes.getProvider.changed) {
       this._provider = undefined;
