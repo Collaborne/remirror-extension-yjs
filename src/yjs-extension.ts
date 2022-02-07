@@ -380,11 +380,10 @@ export class YjsExtension extends PlainExtension<YjsOptions> {
   }
 
   /**
-   * Undo within a collaborative editor.
-   *
-   * This should be used instead of the built in `undo` command.
+   * Undo that last Yjs transaction(s)
    *
    * This command does **not** support chaining.
+   * This command is a no-op and always returns `false` when the `disableUndo` option is set.
    */
   @command({
     disableChaining: true,
@@ -414,11 +413,10 @@ export class YjsExtension extends PlainExtension<YjsOptions> {
   }
 
   /**
-   * Redo, within a collaborative editor.
-   *
-   * This should be used instead of the built in `redo` command.
+   * Redo the last transaction undone with a previous `yUndo` command.
    *
    * This command does **not** support chaining.
+   * This command is a no-op and always returns `false` when the `disableUndo` option is set.
    */
   @command({
     disableChaining: true,
