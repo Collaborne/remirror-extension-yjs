@@ -42,7 +42,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.dist.json && tsc -p tsconfig.dist.cjs.json",
     "build:watch": "npm run build -- --watch",
-    "test": "jest"
+    "test": "NODE_ENV=development jest"
   },
   "dependencies": {
     "@collaborne/y-prosemirror": "^1.1.7"
