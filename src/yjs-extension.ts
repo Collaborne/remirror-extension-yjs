@@ -2,6 +2,7 @@ import {
   absolutePositionToRelativePosition,
   defaultCursorBuilder,
   defaultDeleteFilter,
+  defaultSelectionBuilder,
   redo,
   relativePositionToAbsolutePosition,
   undo,
@@ -51,6 +52,7 @@ import {
   OmitTextAndPosition,
 } from '@remirror/extension-annotation';
 import { ExtensionHistoryMessages as Messages } from '@remirror/messages';
+import { DecorationAttrs } from '@remirror/pm/view';
 
 export interface ColorDef {
   light: string;
@@ -99,6 +101,8 @@ export interface YjsOptions<Provider extends YjsRealtimeProvider = YjsRealtimePr
    * See https://github.com/yjs/y-prosemirror#remote-cursors
    */
   cursorBuilder?: (user: Shape) => HTMLElement;
+
+  selectionBuilder?: (user: Shape) => DecorationAttrs;
 
   /**
    * By default all editor bindings use the awareness 'cursor' field to
@@ -233,6 +237,7 @@ class YjsAnnotationStore<Type extends Annotation> implements AnnotationStore<Typ
     syncPluginOptions: undefined,
     cursorBuilder: defaultCursorBuilder,
     cursorStateField: 'cursor',
+    selectionBuilder: defaultSelectionBuilder,
     getSelection: (state) => state.selection,
     disableUndo: false,
     protectedNodes: new Set('paragraph'),
@@ -303,6 +308,7 @@ export class YjsExtension extends PlainExtension<YjsOptions> {
     const {
       syncPluginOptions,
       cursorBuilder,
+      selectionBuilder,
       getSelection,
       cursorStateField,
       disableUndo,
@@ -317,7 +323,7 @@ export class YjsExtension extends PlainExtension<YjsOptions> {
       ySyncPlugin(type, syncPluginOptions),
       yCursorPlugin(
         this.provider.awareness,
-        { cursorBuilder, cursorStateField, getSelection },
+        { cursorBuilder, selectionBuilder, getSelection },
         cursorStateField,
       ),
     ];
